@@ -1,0 +1,66 @@
+module  Hazard(
+input   [4:0]   RsE,
+input   [4:0]   RtE,
+input   [4:0]   RsD,
+input   [4:0]   RtD,
+input   [4:0]   WriteRegE,
+input   [4:0]   WriteRegM,
+input   [4:0]   WriteRegW,
+input           RegWriteM,
+input           RegWriteW,
+input           MemtoRegE,
+input           BranchD,
+input           RegWriteE,
+input           MemtoRegM,
+input   [31:0]  WriteDataM,
+
+output  reg [1:0]   ForwardAE,
+output  reg [1:0]   ForwardBE,
+output  reg         StallF,
+output  reg         StallD,
+output              FlushE,
+
+output              ForwardAD,
+output              ForwardBD
+);
+
+wire    branchstall;
+wire    lwstall;
+
+initial
+begin
+   StallF = 0;
+   StallD = 0;
+
+end
+always @(*)
+begin//旁路技术
+	if((RsE != 0)&&(RsE == WriteRegM)&&(RegWriteM)&&(!MemtoRegM))
+	ForwardAE <= 2'b10;
+	if((RsE != 0)&&(RsE == WriteRegM)&&(RegWriteM)&&(MemtoRegM))
+	ForwardAE <= 2'b11; 
+	else if((RsE != 0)&&(RsE == WriteRegW)&&(RegWriteW))
+	ForwardAE <= 2'b01;
+	else
+   ForwardAE <= 2'b00;
+
+   if((RtE != 0)&&(RtE == WriteRegM)&&(RegWriteM))
+   ForwardBE <= 2'b10;
+   else if((RtE != 0)&&(RtE == WriteRegW)&&(RegWriteW))
+   ForwardBE <= 2'b01;
+   else
+   ForwardBE <= 2'b00;
+
+   StallF=lwstall | branchstall;
+   StallD=lwstall | branchstall;
+end
+assign lwstall=((RsD==RtE)|(RtD==RtE))&MemtoRegE;
+       //当后一条指令需要用到前一条结果所指向的DM内数据时，需要停顿等待数据从DM中取出
+assign branchstall=(BranchD & RegWriteE & (RsD == WriteRegE | RtD == WriteRegE))|(BranchD & MemtoRegM &(RsD == WriteRegM | Rt == DWriteRegM));
+       //出现跳转指令时，若用于zero比较的地址正好为前一条指令要写回a3的目标地址，需要停顿等待数据写回reg寄存器
+assign ForwardAD = (RsD != 0) && (RsD == WriteDataM) && RegWriteM;
+assign ForwardBD = (RtD != 0) && (RtD == WriteDataM) && RegWriteM;
+       //作zero判断时若所需数据为alu的目标地址，则进行内部前推/旁路技术
+assign FlushE=lwstall | branchstall;		 
+		 
+		 

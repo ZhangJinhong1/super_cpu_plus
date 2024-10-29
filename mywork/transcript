@@ -1,0 +1,6 @@
+# ERROR: No extended dataflow license exists
+# vsim top_tb 
+# Start time: 14:00:46 on Oct 20,2022
+# ** Error (suppressible): (vsim-19) Failed to access library 'work' at "work".
+# No such file or directory. (errno = ENOENT)
+# Error loading design

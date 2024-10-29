@@ -1,0 +1,15 @@
+module  Latch_D(RegWriteD,RegDstD,AluSrcD,MemWriteD,MemtoRegD,ALUControlD,RD1,RD2,RsD,RtD,RdD,SignimmD,CLR,clk);
+input         RegWriteD;
+input         RegDstD;
+input         AluSrcD;
+input         MemWriteD;
+input         MemtoRegD;
+input         RD1;
+input         RD2;
+input  [2:0]  ALUControlD;
+
+input         RD1;
+input         RD2;
+
+input         RD1;
+input         RD2;

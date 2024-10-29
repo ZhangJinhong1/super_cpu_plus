@@ -1,0 +1,15 @@
+`timescale 10ns/1ns
+module top_tb;
+reg clk;
+reg rst_n;
+top  top_inst(
+     .clk(clk),
+	  .rst_n(rst_n));
+initial
+begin
+clk<=1'b0;
+forever 
+begin
+#5 clk<=~clk;
+end
+endmodule

@@ -1,0 +1,9 @@
+module dlatch(clk,Dout,Din)
+input clk;
+input Din;
+output reg Dout;
+always@(posedge clk)
+begin
+Dout<=Din;
+end
+endmodule
